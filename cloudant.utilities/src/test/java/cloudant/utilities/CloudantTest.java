@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -22,6 +24,12 @@ public class CloudantTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		ClassLoader cl = ClassLoader.getSystemClassLoader();
+        URL[] urls = ((URLClassLoader)cl).getURLs();
+
+        for(URL url: urls){
+        	System.out.println(url.getFile());
+        }
 	}
 
 	@AfterClass
@@ -42,7 +50,7 @@ public class CloudantTest {
 		try {
 			database = new CloudantDatabase();
 		} catch(Exception e) {
-			logger.severe("Failed conenct to Cloudant databse: "+e.toString());
+			logger.severe("Failed connect to Cloudant databse: "+e.toString());
 		}
 		assertNotNull("Database is null!", database);
 		
@@ -70,27 +78,31 @@ public class CloudantTest {
 			cloudantProperties.setProperties(properties);
 			logger.info(cloudantProperties.toString());
 			database.save(cloudantProperties);
-			
+			cloudantProperties = null;
+		
 			cloudantProperties = CloudantProperties.find(database,_id);
 			assertNotNull("cloudantProperties is null!", cloudantProperties);
 			assertEquals("cloudantProperties has not only one property", 1, cloudantProperties.getProperties().size(), 0);
 			cloudantProperties.getProperties().add(new Property("NAME2", "VALUE TWO"));
 			logger.info(cloudantProperties.toString());
 			database.update(cloudantProperties);
+			cloudantProperties = null;
 			
 			cloudantProperties = CloudantProperties.find(database,_id);
 			assertNotNull("cloudantProperties is null!", cloudantProperties);
 			assertEquals("cloudantProperties does not have two properties", 2, cloudantProperties.getProperties().size(), 0);
-			
-			database.remove(cloudantProperties);
-			cloudantProperties = CloudantProperties.find(database,_id);	
-			assertNull("cloudantProperties is not null!", cloudantProperties);
+			cloudantProperties = null;
 		} catch(Exception e) {
 			logger.severe(e.toString());
-		} finally {
-			
 		}
-
+		
+		try {
+			database.remove(cloudantProperties);
+			cloudantProperties = CloudantProperties.find(database,_id);	
+			
+		} catch(Exception e) {
+			assertNull("cloudantProperties is not null!", cloudantProperties);
+		}
 	}
 
 }

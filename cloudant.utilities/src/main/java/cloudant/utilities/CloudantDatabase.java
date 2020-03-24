@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import com.cloudant.client.api.ClientBuilder;
 import com.cloudant.client.api.CloudantClient;
 import com.cloudant.client.api.Database;
+import com.cloudant.client.api.model.DbInfo;
 import com.google.gson.JsonObject;
 
 import cloudant.utilities.exceptions.CloudantException;
@@ -129,6 +130,7 @@ public class CloudantDatabase {
                     .password(password)
                     .build();
 			setDatabase(cloudClient.database(getName(), false));
+			logger.info(getDatabase().info().toString());
 		} catch(Exception e) {
 			throw new CloudantException("Failed to get database", e);
 		}
