@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
 

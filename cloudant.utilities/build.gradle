@@ -32,6 +32,7 @@ dependencies {
 }
 
 test {
+    systemProperty "cloudant.properties", "./build/resources/test/cloudant.secret"
     systemProperty "java.util.logging.config.file", "./build/resources/test/logging.properties"
     testLogging.showStandardStreams = true
 }
